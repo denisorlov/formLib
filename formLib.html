@@ -1,0 +1,134 @@
+<html>
+<head>
+	<script type="text/javascript" src="formLib.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<style type="text/css">
+	.error{ 
+		color: red;
+	}
+	.required{ 
+		background-color: #FFF6F6
+	}
+	input[type=text], textarea {
+		width: 150px;
+		border-radius: 4px;
+	}
+	</style>
+</head>
+<body>
+<script type="text/javascript">
+var stdCheck = {
+	EMAIL: { 
+		label:'Email', 
+		required: 1, 
+		regexp:/^([a-z0-9_\-]+\.)*[a-z0-9_\-]+@([a-z0-9][a-z0-9\-]*[a-z0-9]\.)+[a-z]{2,4}$/i
+		,e_message: 'некорректный E-mail адрес'
+	}
+}
+
+formLib.errorClass = 'error';
+var feedbackFormRules = {
+	Name: { 
+		label:'Имя', 
+		required: 1, 
+		regexp:/^[А-яЁёA-Za-z \-]+$/i
+		,e_message: 'только буквы, пробелы и тире'
+	},
+	Email: stdCheck.EMAIL/*{ 
+		label:'Email', 
+		required: 1, 
+		regexp:/^([a-z0-9_\-]+\.)*[a-z0-9_\-]+@([a-z0-9][a-z0-9\-]*[a-z0-9]\.)+[a-z]{2,4}$/i
+		,e_message: 'некорректный E-mail адрес'
+	}*/
+	,Phone: { 
+		label:'Телефон', 
+		required: 0, 
+		regexp:/^\d{5,11}$/
+		,e_message: 'только цифры от 5 до 11'
+	}, 
+	
+	PhoneFAIL: { 
+		label:'Телефон', 
+		required: 1, 
+		regexp:/^\d{5,11}$/
+		,e_message: 'только цифры от 5 до 11'
+	},
+	
+	BirthDate: { 
+		label:'Дата рождения', 
+		required: 0, 
+		regexp:[
+			{regexp:/^\d{2}\.\d{2}\.\d{4}$/, e_message: 'формат дд.мм.гггг'}
+			//,{regexp:/^[0-3]\d\.[0-1]\d\.[1-2]\d{3}$/, e_message: 'неверные значения дня, месяца или года'}
+		],
+		func: function( form, fields, key ){ //валидность даты
+			var dv = form.elements[key].value; //00.00.0000
+			if(!isValidDate( dv.substr(0,2), dv.substr(3,2), dv.substr(6,4) )) return 'дата некорректна';
+			else return '';
+		}
+	},	
+	
+	
+	Message: { 
+		label:'Сообщение', 
+		required: 1, 
+		regexp:[
+			{regexp:/^[\s\S]{10,}$/, e_message: 'слишком короткое сообщение'}
+			,{regexp:/^[\s\S]{10,250}$/, e_message: 'слишком длинное сообщение'}
+		]
+		
+	}
+};
+
+function feedbackFormSubmit( formEl ){		
+	//callback: outErrObj or alertErrObj or function(e_obj, form){ formLib.outErrObj(e_obj, form); formLib.alertErrObj(e_obj, form); } or...
+	if( formLib.validateFields( formEl, feedbackFormRules, formLib.outErrObj ) ) return false; 
+	
+	var numb = (Math.random()+'').slice(-2), /* случайное 2-значное число */
+	resp=prompt('Если Вы не робот впишите числа '+numb, '');
+	
+	if(resp==numb) {		
+		
+		/*
+		$.ajax({
+			type: 'POST',
+			url: '/ajax/feedbackForm.php',
+			data: formLib.getRequestBody( formEl ),
+			dataType: 'json',
+			cache: false,
+			success: function( data, textStatus ){
+				alert( data.message ); */ alert( 'Сообщение отправлено!\nСпасибо.' );
+				for(var i=0; i<formEl.elements.length-1; i++) formEl.elements[i].value='';
+		/*	},
+			error: function( xhr, textStatus, thrownError ){
+				alert( textStatus +': '+thrownError );
+			}
+		});*/
+
+	}else
+	if(resp!==null){
+		alert('Попробуйте снова.');
+	}
+	
+	return false;
+};
+
+function isValidDate(d, m, y) {
+    var dt = new Date(y, m-1, d);
+    return ((y == dt.getFullYear()) && ((m-1) == dt.getMonth()) && (d == dt.getDate()));
+}
+</script>
+<form action="" method="POST" name="feedback_form" id="feedback_form" onsubmit="feedbackFormSubmit( this ); return false;">
+	<p><input type="text" name="Name" id="Name" placeholder="Ваше Имя:" title="Ваше Имя:" class="required"></p>
+	<p><input type="text" name="Email" id="Email" placeholder="Ваш Email:" title="Ваш Email:" class="required"></p>
+	<p><input type="text" name="Phone" id="Phone" placeholder="Ваш телефон:" title="Ваш телефон:"></p>
+	<p><input type="text" name="BirthDate" id="BirthDate" placeholder="Дата рождения:" title="Дата рождения:"></p>
+	<p><textarea rows="5" cols="10" name="Message" id="Message" placeholder="Сообщение:" title="Сообщение:" class="required"></textarea></p>
+	<noscript>javascript отключен :(</noscript>
+	<script type="text/javascript">document.write('<p><input type="submit" value="Отправить..."></p>')</script>	
+</form>
+<script type="text/javascript">
+formLib.bindCheckOnBlur( document.forms['feedback_form'], feedbackFormRules );
+</script>
+</body>
+</html>
