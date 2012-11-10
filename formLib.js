@@ -1,3 +1,4 @@
+// vasya pupkin
 var formLib = {
 
 	about: "Библиотека для динамической проверки форм.\nАвтор: Денис Орлов 2012г.", toString: function() {
