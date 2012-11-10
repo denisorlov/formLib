@@ -1,10 +1,10 @@
 var formLib = {
 
-	about: "Библиотека для динамической проверки форм.\nАвтор: Денис Орлов 2012г.", toString: function() {
+	about: "Библиотека для динамической проверки форм.\nАвтор: Денис Орлов 2012г.", 
+	toString: function() {
 		return this.about;
 	},
-
-	errorClass: "form_field_error" //имя класса для отображения ошибок
+	errorClass: "form_field_error", //имя класса для отображения ошибок
 
 
 	/**
@@ -56,7 +56,8 @@ var formLib = {
 	 *    @param rulesObj - объект правил для полей формы(см. пример выше)
 	 *    @param outErrObjFunc - callback функция вывода ошибок которой будет передан объект e_obj и форма
 	 *    @return объект e_obj или null, если ошибки не найдены
-	 */, validateFields: function( form, rulesObj, outErrObjFunc ) {
+	 */
+	validateFields: function( form, rulesObj, outErrObjFunc ) {
 		//formLib.clearFormErrors( form );
 
 		var e_obj = {}, e_cnt = 0;
@@ -73,7 +74,7 @@ var formLib = {
 			return e_obj;
 		}
 		return null;
-	}
+	},
 
 	/**
 	 * Проверка поля key формы form по объекту rulesObj, логика: @see validateFields
@@ -83,7 +84,8 @@ var formLib = {
 	 * @param {String}        elemName    имя поля, он же и ключ в объекте полей rulesObj
 	 * @return {String}        cообщение об ошибке или пустую строку
 	 * @see validateFields
-	 */, getFieldError: function( form, rulesObj, elemName ) {
+	 */
+	getFieldError: function( form, rulesObj, elemName ) {
 		var elem = form.elements[elemName] || null;
 		if ( elem === null ) return '';
 
@@ -113,18 +115,19 @@ var formLib = {
 		}
 
 		return mess;
-	}
+	},
 
 	/**
 	 *    Вывод найденных ошибок алертом,
 	 *    используется как callback функция в validateFields
 	 *
 	 *    @param e_obj - объект с ошибками, формат - имя_поля: сообщение об ошибке, @see validateFields
-	 */, alertErrObj: function( e_obj ) {
+	 */
+	alertErrObj: function( e_obj ) {
 		var mess = '', key;
 		for( key in e_obj ) mess += '\n   ' + e_obj[ key ];
 		alert( 'Исправьте пожалуйста: ' + mess );
-	}
+	},
 
 	/**
 	 *    Вывод найденных ошибок рядом с элементами формы с пом. метода outErr,
@@ -132,9 +135,10 @@ var formLib = {
 	 *
 	 *    @param e_obj - объект с ошибками, @see validateFields
 	 *    @param form  - форма
-	 */, outErrObj: function( e_obj, form ) {
+	 */
+	outErrObj: function( e_obj, form ) {
 		for( var key in e_obj ) formLib.outErr( form, key, e_obj[ key ] );
-	}
+	},
 
 	/**
 	 *    Вывод строки ошибки рядом с элементом формы,
@@ -143,7 +147,8 @@ var formLib = {
 	 *    @param form  - форма
 	 *    @param inpName  - имя элемента
 	 *    @param errorStr  - строка ошибки
-	 */, outErr: function( form, inpName, errorStr ) {
+	 */
+	outErr: function( form, inpName, errorStr ) {
 
 		var field, el, elErrId = form.name + '_' + inpName + '_error';
 
@@ -161,27 +166,29 @@ var formLib = {
 			el.innerHTML = errorStr;//newEl.appendChild( document.createTextNode(errorStr) );
 			field.parentNode.appendChild( el );
 		}
-	}
+	},
 
 	/**
 	 *    Очистка элементов-ошибок формы
 	 *    удаление элементов созданных методом outErr
 	 *
 	 *    @param form  - форма
-	 */, clearFormErrors: function( form ) {
+	 */
+	clearFormErrors: function( form ) {
 		for( var i = 0; i < form.elements.length; i++ ) {
 			var inpName = form.elements[i].name, elErr = document.getElementById( form.name + '_' + inpName + '_error' ) || null;
 			//IE 7,8 appendChild+innerHTML=fail, can only innerHTML = ''
 			if ( elErr != null ) elErr.parentNode.removeChild( elErr );//or elErr.innerHTML = ''; without collapsing in IE
 		}
-	}
+	},
 
 	/**
 	 *    Привязка проверки элементов формы методом getFieldError на событие onblur
 	 *
 	 *    @param form - проверяемая форма
 	 *    @param rulesObj - объект правил для полей формы( @see validateFields     )
-	 */, bindCheckOnBlur: function( form, rulesObj ) {
+	 */
+	bindCheckOnBlur: function( form, rulesObj ) {
 		for( var key in rulesObj ) {
 			var elem = form.elements[key] || null;
 			if ( elem != null )
@@ -198,14 +205,15 @@ var formLib = {
 					}
 				}
 		}
-	}
+	},
 
 
 	/**
 	 *    Сборка тела запроса из значений элементов формы для отправки через AJAX
 	 *
 	 *    @param form  - форма
-	 */, getRequestBody: function( form ) {
+	 */
+	getRequestBody: function( form ) {
 		var aParams = new Array();
 		for( var i = 0; i < form.elements.length; i++ ) {
 			var sParam = encodeURIComponent( form.elements[i].name );
